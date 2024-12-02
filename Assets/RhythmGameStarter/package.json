@@ -1,0 +1,11 @@
+{
+    "name": "com.bennykok.rhythm-core",
+    "displayName": "Rhythm Core",
+    "description": "Core of RhythmGameStarter",
+    "version": "0.11.0",
+    "standard-version": {
+        "scripts": {
+            "postchangelog": "node .postchangelog"
+        }
+    }
+}
