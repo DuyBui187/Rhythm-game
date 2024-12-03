@@ -434,6 +434,7 @@ GameObject:
   - component: {fileID: 1028226819}
   - component: {fileID: 1028226820}
   - component: {fileID: 1028226821}
+  - component: {fileID: 1028226822}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -547,6 +548,25 @@ MonoBehaviour:
   anim: {fileID: 1028226819}
   switchSpeed: 15
   holdThreshold: 0.2
+--- !u!114 &1028226822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1028226817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 993dbd7559b4aad4cb1ffc37eea8b25f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effectPrefabs:
+  - {fileID: 6651796972252524770, guid: 461b4fde33b5f3147bdab607ffa6659e, type: 3}
+  - {fileID: 2904851670008061273, guid: be63b1224ce92244b911021280edceb1, type: 3}
+  effectSpawnPositions:
+  - {fileID: 1910405414}
+  - {fileID: 1954377061}
+  effectParentTransform: {fileID: 1369869859}
 --- !u!1 &1186766367
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,6 +948,39 @@ LightingSettings:
   m_PVRTiledBaking: 0
   m_NumRaysToShootPerTexel: -1
   m_RespectSceneVisibilityWhenBakingGI: 0
+--- !u!1 &1369869858
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1369869859}
+  m_Layer: 0
+  m_Name: -------------- EFFECTS --------------
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1369869859
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369869858}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1954377061}
+  - {fileID: 1910405414}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1802877698
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,6 +1197,68 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1910405413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1910405414}
+  m_Layer: 0
+  m_Name: EffectHighPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1910405414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1910405413}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.5, y: 2.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1369869859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1954377060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1954377061}
+  m_Layer: 0
+  m_Name: EffectLowPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1954377061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1954377060}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.5, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1369869859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2029318533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,8 +1580,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
+      propertyPath: m_fontSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
       propertyPath: m_textAlignment
       value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
+      propertyPath: m_enableAutoSizing
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
@@ -1477,6 +1602,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_VerticalAlignment
       value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1280003936072372298, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
@@ -1713,6 +1843,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_HorizontalAlignment
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
+      propertyPath: levels.values.Array.data[0].hitGrade
+      value: excellentEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
+      propertyPath: levels.values.Array.data[1].hitGrade
+      value: greatEffect
       objectReference: {fileID: 0}
     - target: {fileID: 4990058766268778735, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
@@ -2056,4 +2196,5 @@ SceneRoots:
   - {fileID: 950768695}
   - {fileID: 750831704}
   - {fileID: 1804703608}
+  - {fileID: 1369869859}
   - {fileID: 2095496335}

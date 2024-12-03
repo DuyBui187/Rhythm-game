@@ -40,9 +40,9 @@ namespace RhythmGameStarter
             UpdateComboDisplay();
         }
 
-        public void AddCombo(int addCombo, float deltaDiff, int score)
+        public void AddCombo(int addCombo, float deltaDiff, int score, int noteAreaID)
         {
-            statsSystem.AddCombo(addCombo, deltaDiff, score);
+            statsSystem.AddCombo(addCombo, deltaDiff, score, noteAreaID);
 
             if (!isShowing)
             {

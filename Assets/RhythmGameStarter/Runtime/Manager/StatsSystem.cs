@@ -38,6 +38,7 @@ namespace RhythmGameStarter
             public float threshold;
             [HideInInspector] public int count;
             public float scorePrecentage = 1;
+            public string hitGrade;
             public StringEvent onCountUpdate;
         }
 
@@ -71,10 +72,11 @@ namespace RhythmGameStarter
             UpdateScoreDisplay();
         }
 
-        public void AddCombo(int addCombo, float deltaDiff, int addScore)
+        public void AddCombo(int addCombo, float deltaDiff, int addScore, int noteAreaID)
         {
             // print(deltaDiff);
             combo += addCombo;
+
             if (combo > maxCombo)
             {
                 maxCombo = combo;
@@ -84,13 +86,15 @@ namespace RhythmGameStarter
             for (int i = 0; i < levels.values.Count; i++)
             {
                 var x = levels.values[i];
+
                 if (deltaDiff <= x.threshold)
                 {
                     x.count++;
-                    score += (int) (addScore * x.scorePrecentage);
+                    score += (int)(addScore * x.scorePrecentage);
                     x.onCountUpdate.Invoke(x.count.ToString());
                     UpdateScoreDisplay();
                     onComboStatusUpdate.Invoke(x.name);
+                    TapEffectSpawner.instance.SpawnEffect(x.hitGrade, noteAreaID);
                     // print(x.name);
                     return;
                 }

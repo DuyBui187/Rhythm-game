@@ -295,6 +295,17 @@ namespace RhythmGameStarter
 
             var note = notesInRange.FirstOrDefault();
 
+            //// Handling Recording mode
+            if (NoteRecorder.INSTANCE && NoteRecorder.INSTANCE.IsRecording)
+            {
+                if (touch.phase != TouchPhase.Began) return;
+                hasTriggeredSomething = true;
+                touchDownPosition = touch.position;
+                // touchDownTime = Time.time;
+                touchDownTimeInSong = songManager.songPosition;
+                return;
+            }
+
             // If a long note is already in progress, don't switch to another note
             if (currentNote != null && currentNote.action == Note.NoteAction.LongPress)
                 return;
@@ -305,7 +316,11 @@ namespace RhythmGameStarter
                 {
                     case Note.NoteAction.Tap:
                         if (touch.phase != TouchPhase.Began) break;
-                        AutoSwitch(note, songManager.playAuto);
+                        if (songManager.playAuto)
+                        {
+                            TapAnim();
+                        }
+                        TriggerTap(note);
                         break;
 
                     case Note.NoteAction.LongPress:
@@ -317,7 +332,11 @@ namespace RhythmGameStarter
 
                     case Note.NoteAction.Swipe:
                         if (touch.phase != TouchPhase.Began) break;
-                        if (songManager.playAuto) AutoSwitch(note, songManager.playAuto);
+                        if (songManager.playAuto)
+                        {
+                            TapAnim();
+                            TriggerTap(note);
+                        }
                         notesInRange.Remove(note);
                         touchDownPosition = touch.position;
                         currentNote = note;
@@ -328,11 +347,34 @@ namespace RhythmGameStarter
             }
         }
 
+        private void TapAnim()
+        {
+            switch (noteAreaID)
+            {
+                case 1:
+                    songManager.characterAction.PressToHighPosition();
+                    break;
+
+                case 2:
+                    songManager.characterAction.PressToLowPosition();
+                    break;
+            }
+        }
+
+        private void TriggerTap(Note note)
+        {
+            currentNote = note;
+
+            EmitEffectIfNeeded();
+
+            PlayHitSound(note);
+            AddCombo(note, note.transform.position);
+
+            KillNote(note);
+        }
 
         private void TriggerLongNote(Note note)
         {
-            songManager.characterAction.ActiveTouchInput();
-
             currentNote = note;
 
             EmitEffectIfNeeded();
@@ -344,14 +386,17 @@ namespace RhythmGameStarter
             longNoteDetecter = note.GetNoteDetecter();
             longNoteDetecter.OnTouchDown();
 
+            if (songManager.playAuto)
+            {
+                songManager.characterAction.ActiveTouchInput();
+                StartCoroutine(HandleLongPress());
+            }
+
             PlayHitSound(note);
 
             notesInRange.Remove(note);
 
             sustainEffect.StartEffect(null);
-
-            if (songManager.playAuto)
-                StartCoroutine(HandleLongPress());
         }
 
         private IEnumerator HandleLongPress()
@@ -389,33 +434,6 @@ namespace RhythmGameStarter
             }
         }
 
-
-        private void AutoSwitch(Note note, bool playAuto)
-        {
-            if (playAuto)
-            {
-                switch (noteAreaID)
-                {
-                    case 1:
-                        songManager.characterAction.PressToHighPosition();
-                        break;
-
-                    case 2:
-                        songManager.characterAction.PressToLowPosition();
-                        break;
-                }
-            }
-
-            currentNote = note;
-
-            EmitEffectIfNeeded();
-
-            PlayHitSound(note);
-            AddCombo(note, note.transform.position);
-
-            KillNote(note);
-        }
-
         private void PlayHitSound(Note note)
         {
             if (!note.noHitSound)
@@ -429,7 +447,7 @@ namespace RhythmGameStarter
         {
             var noteLocalPositionInTrack = note.transform.parent.parent.InverseTransformPoint(touchDownPosition);
             var diff = track.lineArea.localPosition.y - noteLocalPositionInTrack.y;
-            songManager.comboSystem.AddCombo(1, Mathf.Abs(diff), note.score);
+            songManager.comboSystem.AddCombo(1, Mathf.Abs(diff), note.score, noteAreaID);
             songManager.trackManager.onNoteTriggered.Invoke(note);
         }
 
@@ -479,15 +497,22 @@ namespace RhythmGameStarter
                 var note = col.GetComponent<Note>();
                 notesInRange.Add(note);
 
-                if (songManager.playAuto && note.action == Note.NoteAction.LongPress)
-                    TriggerLongNote(note);  // Automatically trigger the long note press interaction
-
                 if (songManager.playAuto)
                 {
+                    // Automatically trigger the long note press interaction
+                    if (note.action == Note.NoteAction.LongPress)
+                    {
+                        TriggerLongNote(note);
+                        return;
+                    }
+
                     // Simulate touch for auto-play functionality
-                    var fakeTouchAuto = new TouchWrapper();
-                    fakeTouchAuto.phase = TouchPhase.Began;  // Simulate touch start
-                    TriggerNote(fakeTouchAuto);  // Automatically trigger long note
+                    var fakeTouchAuto = new TouchWrapper
+                    {
+                        phase = TouchPhase.Began // Simulate touch start
+                    };
+
+                    TriggerNote(fakeTouchAuto);
                 }
             }
         }
