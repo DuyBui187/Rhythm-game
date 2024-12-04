@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace RhythmGameStarter
 {
@@ -14,6 +15,10 @@ namespace RhythmGameStarter
 
         [Header(" Elements ")]
         public CharacterAction characterAction;
+        public Transform endNotePos;
+
+        [Header(" UI ")]
+        public Image songProgressBar;
 
         [Title("Properties", 0)]
         [Space]
@@ -41,7 +46,6 @@ namespace RhythmGameStarter
         [CollapsedEvent("Triggered when the song play, after the delay wait time")] public UnityEvent onSongStart;
         [CollapsedEvent("Triggered when the song play, before the delay wait time")] public UnityEvent onSongStartPlay;
         [CollapsedEvent("Triggered when the song finished")] public UnityEvent onSongFinished;
-
 
         #region RUNTIME_FIELD
 
@@ -196,10 +200,13 @@ namespace RhythmGameStarter
 
                 onSongProgress.Invoke(songPosition);
 
-                if (inverseProgressFill)
-                    onSongProgressFill.Invoke(1 - (songPosition / currentSongItem.clip.length));
-                else
-                    onSongProgressFill.Invoke(songPosition / currentSongItem.clip.length);
+                float progress = songPosition / currentSongItem.clip.length;
+
+                // Update the progress bar fill amount
+                if (songProgressBar != null)
+                    songProgressBar.fillAmount = inverseProgressFill ? 1 - progress : progress;
+
+                onSongProgressFill.Invoke(inverseProgressFill ? 1 - progress : progress);
 
                 if (songPosition >= 0)
                 {

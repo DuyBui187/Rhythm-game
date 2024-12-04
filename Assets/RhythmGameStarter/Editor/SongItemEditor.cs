@@ -369,10 +369,11 @@ namespace RhythmGameStarter
 
                     //This two is for recalculating the currect time when the bpm is changed
                     beatIndex = SongItem.RoundToNearestBeat(beat),
+                    //beatLengthIndex = SongItem.RoundToNearestBeat(beatLength)
 
-                    beatLengthIndex = Mathf.Round(((beatLength < 1f || beatLength > 4)
-        ? UnityEngine.Random.Range(1f, 2.2f)
-        : SongItem.RoundToNearestBeat(beatLength)) * 100) / 100f,
+                    beatLengthIndex = Mathf.Round(((beatLength < .75f || beatLength > 4)
+                    ? /*UnityEngine.Random.Range(1f, 2.2f)*/ .75f + SongItem.RoundToNearestBeat(beatLength)
+                    : SongItem.RoundToNearestBeat(beatLength)) * 100) / 100f,
                 });
             }
             Debug.Log(count + " Note(s) detected from Midi file");

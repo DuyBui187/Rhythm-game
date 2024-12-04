@@ -373,7 +373,7 @@ namespace RhythmGameStarter
             KillNote(note);
         }
 
-        private void TriggerLongNote(Note note)
+        public void TriggerLongNote(Note note)
         {
             currentNote = note;
 
@@ -413,6 +413,7 @@ namespace RhythmGameStarter
 
                     longNoteDetecter.OnTouchUp();  // Gọi sự kiện kết thúc
                     longNoteDetecter = null;
+                    OnInteractionEnd.Invoke();
                     currentNote = null;
 
                     break;  // Kết thúc quá trình LongPress
@@ -463,12 +464,16 @@ namespace RhythmGameStarter
                     StartCoroutine(DelayResetNote(note.gameObject, note.killAnim.length));
                 else
                     Destroy(note.gameObject, note.killAnim.length);
+
+                if (note.action != Note.NoteAction.LongPress)
+                    note.GetComponent<NoteMovement>().StartMovement(songManager.endNotePos);
             }
 
             else
             {
                 if (songManager.trackManager.useNotePool)
                     songManager.trackManager.ResetNoteToPool(note.gameObject);
+
                 else
                     Destroy(note.gameObject);
             }
@@ -496,24 +501,6 @@ namespace RhythmGameStarter
             {
                 var note = col.GetComponent<Note>();
                 notesInRange.Add(note);
-
-                if (songManager.playAuto)
-                {
-                    // Automatically trigger the long note press interaction
-                    if (note.action == Note.NoteAction.LongPress)
-                    {
-                        TriggerLongNote(note);
-                        return;
-                    }
-
-                    // Simulate touch for auto-play functionality
-                    var fakeTouchAuto = new TouchWrapper
-                    {
-                        phase = TouchPhase.Began // Simulate touch start
-                    };
-
-                    TriggerNote(fakeTouchAuto);
-                }
             }
         }
 

@@ -3,45 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
-
+using RhythmGameStarter;
 public class ScreenSizeHandler : MonoBehaviour
 {
-    [SerializeField] private CanvasScaler scaler;
-    private float lastSize;
-    private int lastScreenWidth;
-    private int lastScreenHeight;
-    // Start is called before the first frame update
-    void Start()
+    float targetOrthographicSize = 10f;
+    private void Awake()
     {
-        lastSize = Camera.main.orthographicSize;
-        lastScreenHeight = Screen.height;
-        lastScreenWidth = Screen.width;
-        AdjustCamera();
+        CanvasHelper.OnResolutionOrOrientationChanged.AddListener(AdjustCameraForVerticalScaling);
     }
 
-    private void AdjustCamera()
+    private void AdjustCameraForVerticalScaling()
     {
         float screenAspect = (float)Screen.width / Screen.height;
-        Camera.main.orthographicSize = lastSize / screenAspect;
+        Camera.main.orthographicSize = targetOrthographicSize / screenAspect;
         Debug.Log($"Screen change: {Screen.width}x{Screen.height} (Aspect: {screenAspect})");
-        scaler.referenceResolution.Set(Screen.width, Screen.height);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Screen.width != lastScreenWidth || Screen.height != lastScreenHeight)
-        {
-            lastScreenWidth = Screen.width;
-            lastScreenHeight = Screen.height;
-            AdjustCamera();
-        }
-    }
-
-    //Event for btn
-    public void ForceAdjustCamera()
-    {
-        AdjustCamera();
         //scaler.referenceResolution.Set(Screen.width, Screen.height);
     }
+
+    //private void AdjustCameraForHorizontalScaling()
+    //{
+    //    float screenAspect = (float)Screen.width / Screen.height;
+
+    //    // Adjust orthographic size for consistent horizontal scaling
+    //    Camera.main.orthographicSize = targetOrthographicSize / (2 * screenAspect);
+
+    //    Debug.Log($"Screen resolution: {Screen.width}x{Screen.height}, Aspect: {screenAspect}, Orthographic Size: {Camera.main.orthographicSize}");
+    //}
+
 }

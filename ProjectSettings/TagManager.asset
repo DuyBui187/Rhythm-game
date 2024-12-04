@@ -8,6 +8,7 @@ TagManager:
   - LineArea
   - HighPosition
   - LowPosition
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
