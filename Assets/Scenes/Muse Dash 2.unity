@@ -2569,8 +2569,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
+      propertyPath: levels.values.Array.data[0].fillRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
       propertyPath: levels.values.Array.data[0].hitGrade
       value: excellentEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
+        type: 3}
+      propertyPath: levels.values.Array.data[1].fillRate
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 4684293226625881743, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,
         type: 3}
@@ -3147,7 +3157,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   songManager: {fileID: 1649975704}
-  playAutoToogle: {fileID: 8990114433120203246}
+  fillDuration: 0.5
+  decreaseRate: 0.06
+  frenzyDuration: 5
+  playAutoToggle: {fileID: 8990114433120203246}
+  fillEnergy: {fileID: 1568729163}
 --- !u!224 &4345880425986963340 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7276001931909581222, guid: 8c4ea05311ba67e4a99ffbb1cb5dd565,

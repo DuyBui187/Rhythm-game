@@ -39,6 +39,7 @@ namespace RhythmGameStarter
             [HideInInspector] public int count;
             public float scorePrecentage = 1;
             public string hitGrade;
+            public float fillRate;
             public StringEvent onCountUpdate;
         }
 
@@ -95,6 +96,7 @@ namespace RhythmGameStarter
                     UpdateScoreDisplay();
                     onComboStatusUpdate.Invoke(x.name);
                     TapEffectSpawner.instance.SpawnEffect(x.hitGrade, noteAreaID);
+                    UIManager.instance.IncreaseEnergyBar(x.fillRate);
                     // print(x.name);
                     return;
                 }
