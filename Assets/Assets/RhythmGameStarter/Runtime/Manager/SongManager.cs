@@ -25,6 +25,7 @@ namespace RhythmGameStarter
         public bool playAuto;
         public bool playOnAwake = true;
         public SongItem defaultSong;
+        public SongItem changeSong;
         public float delay;
         public bool looping;
 
@@ -233,5 +234,36 @@ namespace RhythmGameStarter
                     PlaySong(currentSongItem);
             }
         }
+
+        public void ChangeNoteSpeed()
+        {
+            if (changeSong == null)
+            {
+                Debug.LogWarning("No changeSong assigned!");
+                return;
+            }
+
+            // Lấy vị trí hiện tại của bài hát (thời gian phát bài hát hiện tại)
+            float currentSongPosition = audioSource.time;
+
+            // Cập nhật thông tin bài hát mới
+            currentSongItem = changeSong;
+            secPerBeat = 60f / changeSong.bpm;
+            currnetNotes = changeSong.GetNotes();
+
+            // Tiếp tục phát bài hát mới từ vị trí hiện tại
+            if (!audioSource.isPlaying)
+            {
+                audioSource.PlayScheduled(AudioSettings.dspTime);
+                audioSource.time = currentSongPosition;
+            }
+
+            // Cập nhật trackManager để tạo note mới từ vị trí hiện tại
+            trackManager.SetupForNewSong();
+
+            // Đảm bảo các note tiếp tục sinh ra từ bên phải, theo hướng đi của bài hát
+            Debug.Log("Changed to new song and resumed from current position.");
+        }
+
     }
 }

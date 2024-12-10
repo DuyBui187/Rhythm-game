@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
 
     [Header(" Elements ")]
     public SongManager songManager;
+    public BGManager bgManager;
+    public BGFever bgFever;
 
     [Header(" Settings ")]
     public float fillDuration = 0.5f;
@@ -63,6 +65,7 @@ public class UIManager : MonoBehaviour
                 if (fillEnergy.value >= 1f)
                 {
                     isFrenzyMode = true;
+                    bgFever.EnableSquares(true);
                     StartFrenzyMode();
                 }
             });
@@ -75,6 +78,9 @@ public class UIManager : MonoBehaviour
             .setOnComplete(() =>
             {
                 isFrenzyMode = false;
+                bgFever.ReturnStartPosition();
+                bgFever.EnableSquares(false);
+                
             });
     }
 
