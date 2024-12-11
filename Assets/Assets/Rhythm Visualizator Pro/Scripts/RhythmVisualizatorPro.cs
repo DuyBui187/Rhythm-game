@@ -585,9 +585,15 @@ public class RhythmVisualizatorPro : MonoBehaviour {
         if (!visualizationsCanBeUpdated) {
             return;
         }
-
-        // Visualizations
-        if (visualization == Visualizations.Circle) {
+		Camera mainCamera = Camera.main;
+		if (mainCamera != null)
+		{
+			float distanceToCamera = Mathf.Abs(soundBarsTransform.position.z - mainCamera.transform.position.z);
+			float screenWidth = 2f * distanceToCamera * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * mainCamera.aspect;
+			length = screenWidth / 10f; // Adjust based on your desired scaling
+		}
+		// Visualizations
+		if (visualization == Visualizations.Circle) {
             for (int i = 0; i < usedSoundBars; i++) {
                 float angle = i * Mathf.PI * 2f / usedSoundBars;
                 Vector3 pos = soundBarsTransform.transform.localPosition;

@@ -54,6 +54,7 @@ namespace RhythmGameStarter
         [NonSerialized] public SongItem currentSongItem;
         [NonSerialized] public ComboSystem comboSystem;
         [NonSerialized] public TrackManager trackManager;
+        [NonSerialized] public StatsSystem statsSystem;
 
         private bool songHasStarted;
         private bool songStartEventInvoked;
@@ -67,7 +68,7 @@ namespace RhythmGameStarter
         {
             trackManager = GetComponent<TrackManager>();
             comboSystem = GetComponent<ComboSystem>();
-
+            statsSystem = GetComponent<StatsSystem>();
             trackManager.Init(this);
         }
 
@@ -265,5 +266,9 @@ namespace RhythmGameStarter
             Debug.Log("Changed to new song and resumed from current position.");
         }
 
+        public void AddMultiplierStat(float value)
+        {
+            statsSystem.multiplier += value;
+        }
     }
 }

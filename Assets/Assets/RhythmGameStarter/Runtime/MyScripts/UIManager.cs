@@ -10,15 +10,6 @@ public class UIManager : MonoBehaviour
 
     [Header(" Elements ")]
     public SongManager songManager;
-    public BGManager bgManager;
-    public BGFever bgFever;
-
-    [Header(" Settings ")]
-    public float fillDuration = 0.5f;
-    public float decreaseRate = 0.02f;
-    public float frenzyDuration = 5f;
-
-    private bool isFrenzyMode = false;
 
     [Header(" UI ")]
     public Toggle playAutoToggle;
@@ -35,58 +26,8 @@ public class UIManager : MonoBehaviour
         fillEnergy.value = 0;
     }
 
-    void Update()
-    {
-        if (isFrenzyMode) return;
-
-        DecreaseEnergyBar();
-    }
-
     public void SetPlayAuto()
     {
         songManager.playAuto = playAutoToggle.isOn;
-    }
-
-    public void IncreaseEnergyBar(float fillRate)
-    {
-        if (isFrenzyMode) return;
-
-        FillEnergySmooth(fillRate);
-    }
-
-    private void FillEnergySmooth(float fillRate)
-    {
-        float targetFill = Mathf.Min(fillEnergy.value + fillRate, 1);
-
-        LeanTween.value(fillEnergy.value, targetFill, fillDuration)
-            .setOnUpdate((value) => fillEnergy.value = value)
-            .setOnComplete(() =>
-            {
-                if (fillEnergy.value >= 1f)
-                {
-                    isFrenzyMode = true;
-                    bgFever.EnableSquares(true);
-                    StartFrenzyMode();
-                }
-            });
-    }
-
-    private void StartFrenzyMode()
-    {
-        LeanTween.value(fillEnergy.value, 0, frenzyDuration)
-            .setOnUpdate((value) => fillEnergy.value = value)
-            .setOnComplete(() =>
-            {
-                isFrenzyMode = false;
-                bgFever.ReturnStartPosition();
-                bgFever.EnableSquares(false);
-                
-            });
-    }
-
-    private void DecreaseEnergyBar()
-    {
-        if (fillEnergy.value > 0)
-            fillEnergy.value = Mathf.Max(fillEnergy.value - decreaseRate * Time.deltaTime, 0);
     }
 }

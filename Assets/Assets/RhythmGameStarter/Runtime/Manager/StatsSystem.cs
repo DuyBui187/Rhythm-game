@@ -11,7 +11,7 @@ namespace RhythmGameStarter
         [Title("Hit Level Config", false, 2, order = 1)]
         [Tooltip("Config the hit distance difference for each level, such as Perfect,Ok etc")]
         public HitLevelList levels;
-
+        public float multiplier = 1f;
         [Title("Events", 2)] [CollapsedEvent] public StringEvent onComboStatusUpdate;
         [CollapsedEvent] public StringEvent onScoreUpdate;
         [CollapsedEvent] public StringEvent onMaxComboUpdate;
@@ -37,7 +37,7 @@ namespace RhythmGameStarter
             public string name;
             public float threshold;
             [HideInInspector] public int count;
-            public float scorePrecentage = 1;
+            public float scorePrecentage = 1f;
             public string hitGrade;
             public float fillRate;
             public StringEvent onCountUpdate;
@@ -91,12 +91,12 @@ namespace RhythmGameStarter
                 if (deltaDiff <= x.threshold)
                 {
                     x.count++;
-                    score += (int)(addScore * x.scorePrecentage);
+                    score += (int)(addScore * x.scorePrecentage * multiplier);
                     x.onCountUpdate.Invoke(x.count.ToString());
                     UpdateScoreDisplay();
                     onComboStatusUpdate.Invoke(x.name);
                     TapEffectSpawner.instance.SpawnEffect(x.hitGrade, noteAreaID);
-                    UIManager.instance.IncreaseEnergyBar(x.fillRate);
+                    FeverManager.instance.IncreaseEnergyBar(x.fillRate);
                     // print(x.name);
                     return;
                 }

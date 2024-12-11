@@ -46,6 +46,10 @@ namespace RhythmGameStarter
 
             ApplySafeArea();
         }
+        private void Start()
+        {
+            ForceRefresh();
+        }
 
         void Update()
         {

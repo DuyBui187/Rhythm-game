@@ -7,9 +7,13 @@ using RhythmGameStarter;
 public class ScreenSizeHandler : MonoBehaviour
 {
     float targetOrthographicSize = 10f;
-    private void Awake()
+    private void OnEnable()
     {
         CanvasHelper.OnResolutionOrOrientationChanged.AddListener(AdjustCameraForVerticalScaling);
+    }
+    private void OnDisable()
+    {
+        CanvasHelper.OnResolutionOrOrientationChanged.RemoveListener(AdjustCameraForVerticalScaling);
     }
 
     private void AdjustCameraForVerticalScaling()
