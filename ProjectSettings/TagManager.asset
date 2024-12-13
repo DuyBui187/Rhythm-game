@@ -9,6 +9,7 @@ TagManager:
   - HighPosition
   - LowPosition
   - FxTemporaire
+  - Trap
   layers:
   - Default
   - TransparentFX

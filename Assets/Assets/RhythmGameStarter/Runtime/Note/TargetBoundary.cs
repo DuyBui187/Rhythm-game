@@ -15,16 +15,27 @@ namespace RhythmGameStarter
 
         void OnTriggerExit(Collider col)
         {
-            if (col.tag == "Note")
+            switch (col.tag)
             {
-                if (trackManager.useNotePool)
-                {
-                    trackManager.ResetNoteToPool(col.gameObject);
-                }
-                else
-                {
-                    Destroy(col.gameObject);
-                }
+                case "Note":
+
+                    if (trackManager.useNotePool)
+                        trackManager.ResetNoteToPool(col.gameObject);
+
+                    else
+                        Destroy(col.gameObject);
+
+                    break;
+
+                case "Trap":
+
+                    if (trackManager.useNotePool)
+                        trackManager.ResetTrapToPool(col.gameObject);
+
+                    else
+                        Destroy(col.gameObject);
+
+                    break;
             }
         }
     }

@@ -17,15 +17,11 @@ namespace RhythmGameStarter
         public CharacterAction characterAction;
         public Transform endNotePos;
 
-        [Header(" UI ")]
-        public Image songProgressBar;
-
         [Title("Properties", 0)]
         [Space]
         public bool playAuto;
         public bool playOnAwake = true;
         public SongItem defaultSong;
-        public SongItem changeSong;
         public float delay;
         public bool looping;
 
@@ -205,8 +201,8 @@ namespace RhythmGameStarter
                 float progress = songPosition / currentSongItem.clip.length;
 
                 // Update the progress bar fill amount
-                if (songProgressBar != null)
-                    songProgressBar.fillAmount = inverseProgressFill ? 1 - progress : progress;
+                if (UIManager.instance.songProgressBar != null)
+                    UIManager.instance.songProgressBar.fillAmount = inverseProgressFill ? 1 - progress : progress;
 
                 onSongProgressFill.Invoke(inverseProgressFill ? 1 - progress : progress);
 
@@ -214,6 +210,7 @@ namespace RhythmGameStarter
                 {
                     if (progressAsPercentage)
                         onSongProgressDisplay.Invoke(Math.Truncate(songPosition / currentSongItem.clip.length * 100) + "%");
+
                     else
                     {
                         var now = new DateTime((long)songPosition * TimeSpan.TicksPerSecond);
@@ -234,36 +231,6 @@ namespace RhythmGameStarter
                 if (looping)
                     PlaySong(currentSongItem);
             }
-        }
-
-        public void ChangeNoteSpeed()
-        {
-            if (changeSong == null)
-            {
-                Debug.LogWarning("No changeSong assigned!");
-                return;
-            }
-
-            // Lấy vị trí hiện tại của bài hát (thời gian phát bài hát hiện tại)
-            float currentSongPosition = audioSource.time;
-
-            // Cập nhật thông tin bài hát mới
-            currentSongItem = changeSong;
-            secPerBeat = 60f / changeSong.bpm;
-            currnetNotes = changeSong.GetNotes();
-
-            // Tiếp tục phát bài hát mới từ vị trí hiện tại
-            if (!audioSource.isPlaying)
-            {
-                audioSource.PlayScheduled(AudioSettings.dspTime);
-                audioSource.time = currentSongPosition;
-            }
-
-            // Cập nhật trackManager để tạo note mới từ vị trí hiện tại
-            trackManager.SetupForNewSong();
-
-            // Đảm bảo các note tiếp tục sinh ra từ bên phải, theo hướng đi của bài hát
-            Debug.Log("Changed to new song and resumed from current position.");
         }
 
         public void AddMultiplierStat(float value)

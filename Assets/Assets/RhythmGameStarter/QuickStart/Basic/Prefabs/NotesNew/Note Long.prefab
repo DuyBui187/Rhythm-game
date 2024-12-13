@@ -188,6 +188,11 @@ PrefabInstance:
       propertyPath: m_MaskInteraction
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8039747320999360517, guid: a8bbe05f24310734da5700943f3421a9,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8397699897526961635, guid: a8bbe05f24310734da5700943f3421a9,
         type: 3}
       propertyPath: m_Name

@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     [Header(" UI ")]
     public Toggle playAutoToggle;
     public Slider fillEnergy;
+    public Image songProgressBar;
 
     void Awake()
     {

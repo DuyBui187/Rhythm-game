@@ -12,6 +12,7 @@ namespace RhythmGameStarter
         [Title("Mappings", false, 1, order = 1)]
         public MidiTrackMapping midiTracksMapping;
         public NotePrefabMapping notePrefabMapping;
+        public NotePrefabMapping trapPrefabMapping;
 
         [Title("Properties", 1)]
         [Space]
@@ -37,8 +38,10 @@ namespace RhythmGameStarter
         private SongManager songManager;
 
         private Transform notesPoolParent;
+        private Transform trapsPoolParent;
 
         private List<Note> pooledNotes = new List<Note>();
+        private List<Trap> pooledTraps = new List<Trap>();
 
         public enum SyncMode
         {
@@ -60,16 +63,22 @@ namespace RhythmGameStarter
 
         private MidiTrackMapping previousMidiTracksMapping;
         private NotePrefabMapping previousNotePrefabMapping;
+        private NotePrefabMapping previousTrapPrefabMapping;
 
         public void OverrideMapping(MidiTrackMapping midiTracksMapping, NotePrefabMapping notePrefabMapping)
         {
             this.previousMidiTracksMapping = this.midiTracksMapping;
             this.previousNotePrefabMapping = this.notePrefabMapping;
+            this.previousTrapPrefabMapping = this.trapPrefabMapping;
 
             if (midiTracksMapping)
                 this.midiTracksMapping = midiTracksMapping;
+
             if (notePrefabMapping)
+            {
                 this.notePrefabMapping = notePrefabMapping;
+                this.trapPrefabMapping = notePrefabMapping;
+            }
         }
 
         public void ResetMappingOverride()
@@ -78,9 +87,12 @@ namespace RhythmGameStarter
                 this.midiTracksMapping = previousMidiTracksMapping;
             if (previousNotePrefabMapping != null)
                 this.notePrefabMapping = previousNotePrefabMapping;
+            if (previousTrapPrefabMapping != null)
+                this.trapPrefabMapping = previousTrapPrefabMapping;
 
             previousMidiTracksMapping = null;
             previousNotePrefabMapping = null;
+            previousTrapPrefabMapping = null;
         }
 
         public void Init(SongManager songManager)
@@ -98,54 +110,118 @@ namespace RhythmGameStarter
 
         public void UpdateTrack(float songPosition, float secPerBeat)
         {
+            int i = 0;
+
             if (useNotePool)
                 UpdateNoteInPool();
 
             foreach (var track in tracks)
             {
-                switch (syncMode)
+                switch (i)
                 {
-                    case SyncMode.Track:
-                        var target = track.notesParent;
-                        var songPositionInBeats = (songPosition + songManager.delay) / secPerBeat;
-                        if (syncSmoothing)
-                        {
-                            var syncPosY = -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset;
-                            target.Translate(new Vector3(0, -1, 0) * (1 / secPerBeat) * beatSize * Time.deltaTime);
-                            //Smooth out the value with Time.deltaTime
-                            // print(songPosition + " vs  " + syncPosY + " vs " + target.localPosition.y + " vs smooth " + (syncPosY + target.localPosition.y) / 2);
-                            target.localPosition = new Vector3(0, (syncPosY + target.localPosition.y) / 2, 0);
-                        }
-                        else
-                        {
-                            target.localPosition = new Vector3(0, -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset, 0);
-                        }
-                        break;
-                    case SyncMode.IndividualNote:
-                        foreach (Note note in track.runtimeNote)
-                        {
-                            //This note object probably got destroyed
-                            if (!note || !note.inUse) continue;
-                            if (!note.gameObject.activeSelf)
-                            {
-                                note.gameObject.SetActive(true);
-                            }
+                    // Note
+                    case 0:
+                    case 1:
+                    case 4:
+                    case 5:
 
-                            if (syncSmoothing)
-                            {
-                                //Offsetting the noteTime by 1 to prevent division by 0 error if the midi start at time = 0
-                                var originalY = ((note.noteTime + 1) / secPerBeat) * beatSize;
-                                note.transform.localPosition = Vector3.LerpUnclamped(new Vector3(0, originalY, 0), new Vector3(0, hitOffset, 0), (songPosition + 1) / (note.noteTime + 1));
-                            }
-                            else
-                            {
-                                var songPositionInBeats2 = (songPosition - note.noteTime) / secPerBeat;
-                                var syncPosY = -songPositionInBeats2 * beatSize;
-                                note.transform.localPosition = new Vector3(0, syncPosY + hitOffset, 0);
-                            }
+                        switch (syncMode)
+                        {
+                            case SyncMode.Track:
+                                var target = track.notesParent;
+                                var songPositionInBeats = (songPosition + songManager.delay) / secPerBeat;
+                                if (syncSmoothing)
+                                {
+                                    var syncPosY = -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset;
+                                    target.Translate(new Vector3(0, -1, 0) * (1 / secPerBeat) * beatSize * Time.deltaTime);
+                                    //Smooth out the value with Time.deltaTime
+                                    // print(songPosition + " vs  " + syncPosY + " vs " + target.localPosition.y + " vs smooth " + (syncPosY + target.localPosition.y) / 2);
+                                    target.localPosition = new Vector3(0, (syncPosY + target.localPosition.y) / 2, 0);
+                                }
+                                else
+                                {
+                                    target.localPosition = new Vector3(0, -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset, 0);
+                                }
+                                break;
+                            case SyncMode.IndividualNote:
+                                foreach (Note note in track.runtimeNote)
+                                {
+                                    //This note object probably got destroyed
+                                    if (!note || !note.inUse) continue;
+                                    if (!note.gameObject.activeSelf)
+                                    {
+                                        note.gameObject.SetActive(true);
+                                    }
+
+                                    if (syncSmoothing)
+                                    {
+                                        //Offsetting the noteTime by 1 to prevent division by 0 error if the midi start at time = 0
+                                        var originalY = ((note.noteTime + 1) / secPerBeat) * beatSize;
+                                        note.transform.localPosition = Vector3.LerpUnclamped(new Vector3(0, originalY, 0), new Vector3(0, hitOffset, 0), (songPosition + 1) / (note.noteTime + 1));
+                                    }
+                                    else
+                                    {
+                                        var songPositionInBeats2 = (songPosition - note.noteTime) / secPerBeat;
+                                        var syncPosY = -songPositionInBeats2 * beatSize;
+                                        note.transform.localPosition = new Vector3(0, syncPosY + hitOffset, 0);
+                                    }
+                                }
+                                break;
                         }
+
+                        break;
+
+                    case 2:
+                    case 3:
+
+                        switch (syncMode)
+                        {
+                            case SyncMode.Track:
+                                var target = track.trapsParent;
+                                var songPositionInBeats = (songPosition + songManager.delay) / secPerBeat;
+                                if (syncSmoothing)
+                                {
+                                    var syncPosY = -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset;
+                                    target.Translate(new Vector3(0, -1, 0) * (1 / secPerBeat) * beatSize * Time.deltaTime);
+                                    //Smooth out the value with Time.deltaTime
+                                    // print(songPosition + " vs  " + syncPosY + " vs " + target.localPosition.y + " vs smooth " + (syncPosY + target.localPosition.y) / 2);
+                                    target.localPosition = new Vector3(0, (syncPosY + target.localPosition.y) / 2, 0);
+                                }
+                                else
+                                {
+                                    target.localPosition = new Vector3(0, -songPositionInBeats * beatSize + track.lineArea.transform.localPosition.y + hitOffset, 0);
+                                }
+                                break;
+                            case SyncMode.IndividualNote:
+                                foreach (Trap trap in track.runtimeTrap)
+                                {
+                                    //This note object probably got destroyed
+                                    if (!trap || !trap.inUse) continue;
+                                    if (!trap.gameObject.activeSelf)
+                                    {
+                                        trap.gameObject.SetActive(true);
+                                    }
+
+                                    if (syncSmoothing)
+                                    {
+                                        //Offsetting the trapTime by 1 to prevent division by 0 error if the midi start at time = 0
+                                        var originalY = ((trap.trapTime + 1) / secPerBeat) * beatSize;
+                                        trap.transform.localPosition = Vector3.LerpUnclamped(new Vector3(0, originalY, 0), new Vector3(0, hitOffset, 0), (songPosition + 1) / (trap.trapTime + 1));
+                                    }
+                                    else
+                                    {
+                                        var songPositionInBeats2 = (songPosition - trap.trapTime) / secPerBeat;
+                                        var syncPosY = -songPositionInBeats2 * beatSize;
+                                        trap.transform.localPosition = new Vector3(0, syncPosY + hitOffset, 0);
+                                    }
+                                }
+                                break;
+                        }
+
                         break;
                 }
+
+                i++;
             }
 
         }
@@ -173,17 +249,39 @@ namespace RhythmGameStarter
             note.transform.localPosition = Vector3.zero;
         }
 
-        private GameObject GetUnUsedNote(int noteType)
+        public void ResetTrapToPool(GameObject noteObject)
         {
-            var note = pooledNotes.Find(x => !x.inUse && x.noteType == noteType);
+            var trap = noteObject.GetComponent<Trap>();
+            if (!trap) return;
+            trap.ResetForPool();
+            trap.transform.SetParent(trapsPoolParent);
+            trap.gameObject.SetActive(false);
+            trap.transform.localPosition = Vector3.zero;
+        }
 
-            if (note == null)
+        private GameObject GetUnUsedNote(int noteType, bool isTrap = false)
+        {
+            if (!isTrap)
             {
-                note = GetNewNoteObject(noteType);
+                var note = pooledNotes.Find(x => !x.inUse && x.noteType == noteType);
+
+                if (note == null)
+                    note = GetNewNoteObject(noteType);
+
+                note.inUse = true;
+                return note.gameObject;
             }
 
-            note.inUse = true;
-            return note.gameObject;
+            else
+            {
+                var trap = pooledTraps.Find(x => !x.inUse && x.noteType == noteType);
+
+                if (trap == null)
+                    trap = GetNewTrapObject(noteType);
+
+                trap.inUse = true;
+                return trap.gameObject;
+            }
         }
 
         private Note GetNewNoteObject(int noteType)
@@ -208,18 +306,45 @@ namespace RhythmGameStarter
             return note;
         }
 
+        private Trap GetNewTrapObject(int trapType)
+        {
+            if (trapPrefabMapping.notesPrefab[trapType].prefab == null)
+            {
+                Debug.LogError("The prefab type index at " + trapType + " shouldn't be null, please check the TrapPrefabMapping asset");
+            }
+            var o = Instantiate(trapPrefabMapping.notesPrefab[trapType].prefab);
+
+            var originalLocalScale = o.transform.localScale;
+            o.transform.SetParent(trapsPoolParent);
+            o.transform.localScale = originalLocalScale;
+
+            o.SetActive(false);
+
+            var trap = o.GetComponent<Trap>();
+            trap.noteType = trapType;
+            trap.inUse = false;
+            pooledTraps.Add(trap);
+
+            return trap;
+        }
+
         private void InitNotePool()
         {
+            // Note
             notesPoolParent = new GameObject("NotesPool").transform;
             notesPoolParent.SetParent(transform);
             notesPoolParent.localScale = Vector3.one;
             for (int i = 0; i < notePrefabMapping.notesPrefab.Count; i++)
-            {
                 for (int j = 0; j < notePrefabMapping.notesPrefab[i].poolSize; j++)
-                {
                     GetNewNoteObject(i);
-                }
-            }
+
+            // Trap
+            trapsPoolParent = new GameObject("TrapsPool").transform;
+            trapsPoolParent.SetParent(transform);
+            trapsPoolParent.localScale = Vector3.one;
+            for (int i = 0; i < trapPrefabMapping.notesPrefab.Count; i++)
+                for (int j = 0; j < trapPrefabMapping.notesPrefab[i].poolSize; j++)
+                    GetNewTrapObject(i);
         }
 
         private void SetUpNotePool()
@@ -248,24 +373,60 @@ namespace RhythmGameStarter
 
         private void UpdateNoteInPool()
         {
+            int i = 0;
+
             foreach (var track in tracks)
             {
                 if (track.allNotes == null) continue;
 
-                foreach (var note in track.allNotes)
+                switch (i)
                 {
-                    //We need to place this note ahead
-                    if (!note.created && songManager.songPosition + poolLookAheadTime >= note.time)
-                    {
-                        note.created = true;
+                    // Note
+                    case 0:
+                    case 1:
+                    case 4:
+                    case 5:
 
-                        var noteType = notePrefabMapping.GetNoteType(note);
-                        var newNoteObject = GetUnUsedNote(noteType);
-                        track.AttachNote(newNoteObject);
+                        foreach (var note in track.allNotes)
+                        {
+                            //We need to place this note ahead
+                            if (!note.created && songManager.songPosition + poolLookAheadTime >= note.time)
+                            {
+                                note.created = true;
 
-                        InitNote(newNoteObject, note);
-                    }
+                                var noteType = notePrefabMapping.GetNoteType(note);
+                                var newNoteObject = GetUnUsedNote(noteType);
+                                track.AttachNote(newNoteObject);
+
+                                InitNote(newNoteObject, note);
+                            }
+                        }
+
+                        break;
+
+                    // Trap
+                    case 2:
+                    case 3:
+
+                        foreach (var trap in track.allNotes)
+                        {
+                            //We need to place this trap ahead
+                            if (!trap.created && songManager.songPosition + poolLookAheadTime >= trap.time)
+                            {
+                                trap.created = true;
+
+                                var trapType = trapPrefabMapping.GetNoteType(trap);
+                                var newTrapObject = GetUnUsedNote(trapType, true);
+                                track.AttachTrap(newTrapObject);
+
+                                InitTrap(newTrapObject, trap);
+                            }
+                        }
+
+                        break;
                 }
+
+                i++;
             }
         }
 
@@ -292,6 +453,21 @@ namespace RhythmGameStarter
             onNoteInit.Invoke(noteScript);
         }
 
+        private void InitTrap(GameObject newTrapObject, SongItem.MidiNote trap)
+        {
+            var pos = Vector3.zero;
+            var time = trap.time;
+            var beatUnit = time / songManager.secPerBeat;
+            pos.y = beatUnit * beatSize + (songManager.delay / songManager.secPerBeat * beatSize);
+            //The note is being positioned in the track and offset with the delay.
+
+            newTrapObject.transform.localPosition = pos;
+
+            //For the SyncMode.IndividualNote, we activate the note object later on
+            if (syncMode == SyncMode.Track)
+                newTrapObject.SetActive(true);
+        }
+
         private void CreateAllNoteNow()
         {
             for (int i = 0; i < tracks.Count(); i++)
@@ -309,10 +485,31 @@ namespace RhythmGameStarter
 
                 if (track.allNotes == null) continue;
 
-                foreach (var note in track.allNotes)
+                switch (i)
                 {
-                    var newNoteObject = track.CreateNote(notePrefabMapping.GetNotePrefab(note));
-                    InitNote(newNoteObject, note);
+                    case 0:
+                    case 1:
+                    case 4:
+                    case 5:
+
+                        foreach (var note in track.allNotes)
+                        {
+                            var newNoteObject = track.CreateNote(notePrefabMapping.GetNotePrefab(note));
+                            InitNote(newNoteObject, note);
+                        }
+
+                        break;
+
+                    case 2:
+                    case 3:
+
+                        foreach (var trap in track.allNotes)
+                        {
+                            var newTrapObject = track.CreateTrap(trapPrefabMapping.GetNotePrefab(trap));
+                            InitTrap(newTrapObject, trap);
+                        }
+
+                        break;
                 }
             }
         }
